@@ -8,8 +8,14 @@ load_dotenv()
 api_key = os.environ.get("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key)
 
-response = client.models.generate_content(model='gemini-2.0-flash-001', contents='Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum.')
-print(response.text)
+user_argument = sys.argv
+
+if len(user_argument) < 2:
+    print("Error! Expecting an argument after main.py")
+    sys.exit(1)
+else:
+    response = client.models.generate_content(model='gemini-2.0-flash-001', contents=user_argument[1])
+    print(response.text)
 
 usage_metadata = GenerateContentResponseUsageMetadataOrDict
 

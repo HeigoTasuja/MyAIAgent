@@ -2,23 +2,37 @@ import os
 import sys
 from dotenv import load_dotenv
 from google import genai
-from google.genai.types import GenerateContentResponseUsageMetadataOrDict
+from google.genai import types
 
-load_dotenv()
-api_key = os.environ.get("GEMINI_API_KEY")
-client = genai.Client(api_key=api_key)
 
-user_argument = sys.argv
+def main():
+    load_dotenv()
 
-if len(user_argument) < 2:
-    print("Error! Expecting an argument after main.py")
-    sys.exit(1)
-else:
-    response = client.models.generate_content(model='gemini-2.0-flash-001', contents=user_argument[1])
+    user_argument = sys.argv[1:]
+
+    if not user_argument:
+        print("Error! Expecting an argument after main.py: python main.py 'your argument here'")
+        sys.exit(1)
+
+    user_prompt = " ".join(user_argument)
+    api_key = os.environ.get("GEMINI_API_KEY")
+    client = genai.Client(api_key=api_key)
+
+
+    user_prompt = " ".join(user_argument)
+
+    messages = [
+            types.Content(role="user", parts=[types.Part(text=user_prompt)])
+            ]
+
+    generate_content(client, messages)
+
+
+def generate_content(client, messages):
+    response = client.models.generate_content(model="gemini-2.0-flash-001", contents=messages)
     print(response.text)
 
-usage_metadata = GenerateContentResponseUsageMetadataOrDict
 
-# prompt_tokens = response.usage_metadata.prompt_token_count
-# response_tokens = response.usage_metadata.candidates_token_count <--- if there is a need to see used token count
+if __name__ == "__main__":
+    main()
 

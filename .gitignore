@@ -1,4 +1,4 @@
 .env
 .venv
-__pycahche__
+__pycache__
 .zsh_history

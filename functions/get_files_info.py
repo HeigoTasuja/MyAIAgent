@@ -36,6 +36,13 @@ def get_file_content(working_directory, file_path):
         return f'Error: File not found or is not a regular file "{file_path}"'
 
     try:
-        with open(work_file_path, "r")
-        pass # :TODO finish this function
+        MAX_CHARS = 10000
+        with open(work_file_path, "r") as f:
+            file_content = f.read(MAX_CHARS)
+            if f.read(1):
+                return f"{file_content} [...File '{work_file_path}' truncated at 10000 characters]"
+            return file_content
+    except Exception as e:
+        return f"Error cannot read file: {e}"
+
 

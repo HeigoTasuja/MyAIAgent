@@ -44,5 +44,18 @@ def get_file_content(working_directory, file_path):
             return file_content
     except Exception as e:
         return f"Error cannot read file: {e}"
+    
 
+def write_file(working_directory, file_path, content):
+    wrk_dir_abspath = os.path.abspath(working_directory)
+    work_file_path = os.path.abspath(os.path.join(working_directory, file_path))
 
+    if not work_file_path.startswith(wrk_dir_abspath):
+        return f'Error: Cannot write to "{file_path}" as it is outside the permitted working directory'
+
+    try:
+        with open(work_file_path, "w") as f:
+            f.write(content)
+        return f'Successfully wrote to "{file_path}" ({len(content)} characters written)'
+    except Exception as e:
+        return f"Error writing to file: {e}"

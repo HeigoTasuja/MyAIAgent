@@ -1,22 +1,14 @@
-from functions.get_files_info import get_files_info, get_file_content
+from functions.get_files_info import write_file
 
 
 def test():
-    result = get_file_content("calculator", "lorem.txt")
-    print("Result for current directory:")
-    print(result)
-    print("")
-
-    result = get_file_content("calculator", "main.py")
-    print("Result for 'pkg' directory:")
+    result = write_file("calculator", "lorem.txt", "wait, this isn't lorem ipsum")
     print(result)
 
-    result = get_file_content("calculator", "pkg/calculator.py")
-    print("Result for 'pkg/calculator' directory:")
+    result = write_file("calculator", "pkg/morelorem.txt", "lorem ipsum dolor sit amet")
     print(result)
 
-    result = get_file_content("calculator", "bin/cat")
-    print("Result for 'bin' directory:")
+    result = write_file("calculator", "/tmp/temp.txt", "this should not be allowed")
     print(result)
 
 

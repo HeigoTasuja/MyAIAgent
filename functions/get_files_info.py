@@ -1,5 +1,6 @@
+import subprocess
 import os
-
+import sys
 
 def get_files_info(working_directory, directory=None):
     wrk_dir_abspath = os.path.abspath(working_directory)
@@ -27,7 +28,7 @@ def get_files_info(working_directory, directory=None):
 
 
 def get_file_content(working_directory, file_path):
-    wrk_dir_abspath = os .path.abspath(working_directory)
+    wrk_dir_abspath = os.path.abspath(working_directory)
     work_file_path = os.path.abspath(os.path.join(working_directory, file_path))
 
     if not work_file_path.startswith(wrk_dir_abspath):
@@ -59,3 +60,47 @@ def write_file(working_directory, file_path, content):
         return f'Successfully wrote to "{file_path}" ({len(content)} characters written)'
     except Exception as e:
         return f"Error writing to file: {e}"
+
+
+def run_python_file(working_directory, file_path, args=[]):
+    wrk_dir_abspath = os.path.abspath(working_directory)
+    work_file_path = os.path.abspath(os.path.join(working_directory, file_path))
+
+    if not work_file_path.startswith(wrk_dir_abspath):
+        return f'Error: Cannot execute "{file_path}" as it is outside the permitted working directory'
+    
+    if not os.path.isfile(work_file_path):
+        return f'Error: File "{file_path}" not found.'
+    
+    if not file_path.endswith('.py'):
+        return f'Error: "{file_path}" is not a Python file.'
+    
+    try:
+        cmd = [sys.executable, file_path] + args
+        
+        result = subprocess.run(
+            cmd,
+            cwd=working_directory,
+            timeout=30,
+            capture_output=True,
+            text=True
+        )
+        
+        output_parts = []
+        
+        if result.stdout:
+            output_parts.append(f"STDOUT:\n{result.stdout}")
+        
+        if result.stderr:
+            output_parts.append(f"STDERR:\n{result.stderr}")
+            
+        if result.returncode != 0:
+            output_parts.append(f"Process exited with code {result.returncode}")
+            
+        if not output_parts:
+            return "No output produced."
+            
+        return "\n".join(output_parts)
+
+    except Exception as e:
+        return f"Error: executing Python file: {e}"
